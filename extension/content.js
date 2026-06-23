@@ -1,20 +1,26 @@
-const blockedUsers = [
-    "thewldeninggyre"
-];
+let blockedUsers = [];
+
+async function loadBlocklist() {
+    blockedUsers = await fetch(
+        "https://raw.githubusercontent.com/CharliVanNood/hide-transphobes/refs/heads/main/extension/blocked.json"
+    ).then(r => r.json());
+
+    blockedUsers = blockedUsers.map(u => u.toLowerCase());
+
+    console.log("Loaded", blockedUsers.length, "users");
+}
 
 function scanTweets() {
     let articles = $('[role="region"]').querySelector(':scope > div').querySelector(':scope > div').querySelectorAll(':scope > div');
 
     for (let article of articles) {
         let links = article.querySelectorAll('a[href^="/"]');
-        console.log(links);
 
         for (let link of links) {
             let username = link
                 .getAttribute("href")
                 ?.replace("/", "")
                 .toLowerCase();
-            console.log(username);
 
             if (blockedUsers.includes(username)) {
                 for (let span of article.querySelectorAll("span")) {
@@ -37,5 +43,9 @@ function scanTweets() {
     }
 }
 
-scanTweets();
-setInterval(scanTweets, 1000);
+(async () => {
+    await loadBlocklist();
+
+    scanTweets();
+    setInterval(scanTweets, 1000);
+})();
