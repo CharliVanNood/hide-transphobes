@@ -11,7 +11,7 @@ async function loadBlocklist() {
 }
 
 function scanTweets() {
-    let articles = $('[role="region"]').querySelector(':scope > div').querySelector(':scope > div').querySelectorAll(':scope > div');
+    let articles = document.querySelector('[role="region"]').querySelector(':scope > div').querySelector(':scope > div').querySelectorAll(':scope > div');
 
     for (let article of articles) {
         let links = article.querySelectorAll('a[href^="/"]');
@@ -44,6 +44,7 @@ function scanTweets() {
 }
 
 (async () => {
+    console.log("loading blocks");
     await loadBlocklist();
 
     scanTweets();
